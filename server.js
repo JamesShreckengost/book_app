@@ -23,6 +23,13 @@ function handleIndex(req, res){
 }
 
 
+// ---------------------------------------------------------------
+app.get('/searches/new', handleNew)
+
+function handleNew(req, res){
+  res.render('./searches/new.ejs')
+}
+
 
 // ========================= Initialization ====================
 app.listen(PORT, () => console.log(`up on http://localhost:${PORT}`));
