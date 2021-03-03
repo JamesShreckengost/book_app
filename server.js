@@ -12,33 +12,39 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
-// client.on('error', error => console.log(error));
+const client = new pg.Client('postgres://')
+client.on('error', error => console.log(error));
 
 
 // ======================= Routes =================================
-app.get('/', handleIndex);
+app.get('/', homePage);
+// app.post('/search', handleBookSearch);
+app.get('/books/:id', getSingleBook)
+app.post('/books', addBook)
 
-function handleIndex(req, res) {
-  res.render('./pages/index.ejs');
+function homePage(req, res) {
+  res.render('pages/index.ejs');
 }
 
 
-
-
-// ---------------------------------------------------------------
 app.get('/searches/new', (req, res) => {
   res.render('./searches/new.ejs');
 });
 
-app.post('/searches/new', (req, res) => {
+app.post('/search', (req, res) => {
   let bookSearch = req.query.selectionType;
   let search = req.body.query;
   let url = `https://www.googleapis.com/books/v1/volumes?q=in${search}:${bookSearch}`;
 
   superagent.get(url)
     .then(userData => {
-      const bookArr = userData.body.items.map(bookSearch => new Books (bookSearch));
-      res.render('pages/searches/show.ejs', {bookArr: bookArr});
+
+      const bookArr = userData.body.items.map(bookSearch => {
+        const book = new Book(bookSearch);
+        console.log(book);
+        return book
+      });
+      res.render('./searches/show.ejs', { bookArr: bookArr });
     })
     .catch(error => {
       console.log(error);
@@ -46,17 +52,17 @@ app.post('/searches/new', (req, res) => {
     });
 });
 
-function Books(object) {
-  this.img = object.volumeInfo.imageLinks ? object.volumeInfo.imageLinks.smallThumbnail : "https://i.imgur.com/J5LVHEL.jpg";
+function Book(object) {
+
+  
+
+  this.image_url = object.volumeInfo.imageLinks ? object.volumeInfo.imageLinks.smallThumbnail.replace(/HTTP:/i, 'https:') : "https://i.imgur.com/J5LVHEL.jpg";
   this.title = object.volumeInfo.title;
   this.author = object.volumeInfo.authors;
   this.description = object.volumeInfo.description;
   this.pubDate = object.volumeInfo.publishedDate
 }
 
-
-// ----------------------------------------------------------
-app.post('/search', handleBookSearch)
 
 function handleBookSearch(req, res) {
   console.log(req.body)
@@ -65,7 +71,7 @@ function handleBookSearch(req, res) {
       const bookArr = data.body.items.map(eachBook => {
         return new Book(eachBook);
       })
-      res.render('./searches/show.ejs', {bookArr: bookArr});
+      res.render('./searches/show.ejs', { bookArr: bookArr });
       console.log(data.body.items)
     });
 
@@ -73,11 +79,21 @@ function handleBookSearch(req, res) {
 
 
 
-function Book(title, image, authors, description) {
-  this.title = title,
-    this.image = image || `https://i.imgur.com/J5LVHEL.jpg`,
-    this.authors = authors,
-    this.description = description
+// function Book(title, image, authors, description) {
+//   this.title = title,
+//     this.image_url = image || `https://i.imgur.com/J5LVHEL.jpg`,
+//     this.authors = authors,
+//     this.description = description
+
+// }
+
+
+// app.get('/books/:id', getsingleBook)
+function getSingleBook() {
+  res.render('pages/books/')
+}
+// app.post('/books', addBook)
+function addBook() {
 
 }
 
