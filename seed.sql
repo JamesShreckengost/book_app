@@ -1,0 +1,1 @@
+INSERT INTO book_table (author, title, isbn, image_url, description) VALUES ('Jim','gaming101', '12312ed23', 'https://i.imgur.com/J5LVHEL.jpg', 'How to game');
