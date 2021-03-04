@@ -4,19 +4,23 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+        
   <title>Form</title>
 </head>
 
   <body>
-   <nav>Jim's Books</nav>
+   <nav>Jim's Books
+     <%= count %>
+   </nav>
+
     <ul>
-      <form action="/search" method="POST">
-        <li id="search"><input type="text" placeholder="Enter a Title or Author" name="query"> </li>
-        <li id="title"><input type="radio" value="1" name="selectionType">Title</li>
-        <li id="Author"><input type="radio" value="2" name="selectionType">Author</li>
-        <li id="search_button"><button type="submit" ></li>
-      </form>
+        <% bookArr.forEach(allBooks => { %>
+          <li>
+            <h2><%= allBooks.title %></h2>
+            <p><%= allBooks.description %></p>
+            <a href="/books/<%= allBooks.id %>"><button>View Details</button></a>
+          </li>
+       <% })   %>
     </ul>
   </body>
 
